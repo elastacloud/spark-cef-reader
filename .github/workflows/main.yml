@@ -25,11 +25,27 @@ jobs:
           java-version: '8'
           distribution: 'adopt'
 
-      - name: Test and package
-        run: sbt -DsparkVersion="${{ matrix.spark-version }}" clean compile test package
+      - name: Test
+        run: sbt -DsparkVersion="${{ matrix.spark-version }}" clean coverageOn compile test coverageReport
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        with:
+          files: ./target/spark-${{ matrix.spark-version }}/scala-2.12/coverage-report/cobertura.xml
+          env_vars: ${{ matrix.spark-version }}
+          fail_ci_if_error: true
+          name: spark-cef
+          verbose: true
+
+      - name: Package
+        if: ${{ github.event_name != 'pull_request' }}
+        run: sbt -DsparkVersion="${{ matrix.spark-version }}" clean coverageOff package
 
       - name: Upload the package
+        if: ${{ github.event_name != 'pull_request' }}
         uses: actions/upload-artifact@v3.1.2
         with:
-          path: ./target/**/spark-cef-reader*.jar
+          path: ./target/spart-${{ matrix.spark-version }}/scala-2.12/spark-cef-reader*.jar
           if-no-files-found: warn
