@@ -25,8 +25,22 @@ jobs:
         java-version: '8'
         distribution: 'adopt'
 
-    - name: Test and package
-      run: sbt -DsparkVersion="${{ matrix.spark-version }}" clean compile test package
+    - name: Run tests and produce coverage
+      run: sbt -DsparkVersion="${{matrix.sparkVersion}}" clean coverageOn test coverageReport
+
+#    - name: Upload coverage to CodeCov
+#      uses: codecov/codecov-action@v3.1.4
+#      with:
+#        token: ${{ secrets.CODECOV_TOKEN }}
+#        files: ./target/spark-${{ matrix.sparkVersion }}/scala-2.12/coverage-report/cobertura.xml
+#        env_vars: ${{ matrix.sparkVersion }}
+#        fail_ci_if_error: true
+#        name: spark-cef-reader
+#        verbose: true
+
+    - name: Create package
+      if: ${{ github.event_name != 'pull_request' }}
+      run: sbt -DsparkVersion="${{matrix.sparkVersion}}" clean coverageOff package
 
     - name: Upload the package
       uses: actions/upload-artifact@v3.1.2
