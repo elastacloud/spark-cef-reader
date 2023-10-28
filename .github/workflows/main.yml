@@ -47,5 +47,5 @@ jobs:
         if: ${{ github.event_name != 'pull_request' }}
         uses: actions/upload-artifact@v3.1.2
         with:
-          path: ./target/spart-${{ matrix.spark-version }}/scala-2.12/spark-cef-reader*.jar
+          path: ./target/spark-${{ matrix.spark-version }}/scala-2.12/spark-cef-reader*.jar
           if-no-files-found: warn
