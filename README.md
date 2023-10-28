@@ -4,6 +4,7 @@ A custom Spark data source supporting the [Common Event Format](https://support.
 standard for logging events.
 
 [![Spark library CI](https://github.com/elastacloud/spark-cef-reader/actions/workflows/main.yml/badge.svg)](https://github.com/elastacloud/spark-cef-reader/actions/workflows/main.yml)
+[![codecov](https://codecov.io/gh/elastacloud/spark-cef-reader/graph/badge.svg?token=T0FBFZRK7S)](https://codecov.io/gh/elastacloud/spark-cef-reader)
 
 ## Fork
 
