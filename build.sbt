@@ -6,11 +6,11 @@ val scalaTestVersion = settingKey[String]("ScalaTest version")
 
 name := "spark-cef-reader"
 version := "0.6-SNAPSHOT"
-organization := "com.bp"
+organization := "com.elastacloud"
 description := "CEF data source for Spark"
-homepage := Some(url("https://github.com/bp/spark-cef-reader"))
+homepage := Some(url("https://github.com/elastacloud/spark-cef-reader"))
 licenses += ("Apache License, Version 2.0", url("https://www.apache.org/licenses/LICENSE-2.0"))
-scmInfo := Some(ScmInfo(url("https://github.com/bp/spark-cef-reader"), "https://github.com/bp/spark-cef-reader.git"))
+scmInfo := Some(ScmInfo(url("https://github.com/elastacloud/spark-cef-reader"), "https://github.com/elastacloud/spark-cef-reader.git"))
 developers ++= List(
   Developer(id = "dazfuller", name = "Darren Fuller", email = "darren@elastacloud.com", url = url("https://github.com/elastacloud")),
   Developer(id = "azurecoder", name = "Richard Conway", email = "richard@elastacloud.com", url = url("https://github.com/elastacloud"))
@@ -32,8 +32,10 @@ Compile / unmanagedSourceDirectories ++= {
     Seq(baseDirectory.value / "src/main/3.0/scala")
   } else if (sparkVersion.value < "3.3.0") {
     Seq(baseDirectory.value / "src/main/3.2/scala")
-  } else {
+  } else if (sparkVersion.value < "3.4.0") {
     Seq(baseDirectory.value / "src/main/3.3/scala")
+  } else {
+    Seq(baseDirectory.value / "src/main/3.4/scala")
   }
 }
 
@@ -46,15 +48,23 @@ libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % scalaTestVersion.value % Test
 )
 
+coverageOutputCobertura := true
+coverageOutputHTML := true
+coverageMinimumStmtTotal := 70
+coverageFailOnMinimum := false
+coverageHighlighting := true
+
 // Define common settings for the library
 val commonSettings = Seq(
-  sparkVersion := System.getProperty("sparkVersion", "3.3.0"),
+  sparkVersion := System.getProperty("sparkVersion", "3.5.0"),
   scalaVersion := {
-    if (sparkVersion.value >= "3.2.0") {
+    if (sparkVersion.value < "3.2.0") {
+      "2.12.10"
+    } else if (sparkVersion.value < "3.4.0") {
       "2.12.14"
     } else {
-      "2.12.10"
+      "2.12.15"
     }
   },
-  scalaTestVersion := "3.2.13"
+  scalaTestVersion := "3.2.17"
 )
